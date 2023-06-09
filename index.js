@@ -135,11 +135,47 @@ async function run() {
         },
       };
       try {
-        const result = await classesCollection.updateOne(filter, updateDoc);
+        const result = await classCollection.updateOne(filter, updateDoc);
         res.send(result);
       } catch (error) {
         console.error("Error sending feedback:", error);
         res.status(500).send("Error sending feedback");
+      }
+    });
+
+    // Update class status to approved
+    app.patch("/classes/approve/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          status: "approved",
+        },
+      };
+      try {
+        const result = await classCollection.updateOne(filter, updateDoc);
+        res.send(result);
+      } catch (error) {
+        console.error("Error approving class:", error);
+        res.status(500).send("Error approving class");
+      }
+    });
+
+    // Update class status to denied
+    app.patch("/classes/deny/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          status: "denied",
+        },
+      };
+      try {
+        const result = await classCollection.updateOne(filter, updateDoc);
+        res.send(result);
+      } catch (error) {
+        console.error("Error denying class:", error);
+        res.status(500).send("Error denying class");
       }
     });
 
