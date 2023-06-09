@@ -26,6 +26,7 @@ async function run() {
     client.connect();
 
     const usersCollection = client.db("musicLand").collection("users");
+    const classCollection = client.db("musicLand").collection("class");
 
     // users related apis
     app.get("/users", async (req, res) => {
@@ -79,6 +80,13 @@ async function run() {
       res.send(result);
     });
 
+    app.delete("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await usersCollection.deleteOne(query);
+      res.send(result);
+    });
+
     // Handle Google sign-in
     app.post("/users/google", async (req, res) => {
       const user = req.body;
@@ -91,6 +99,29 @@ async function run() {
 
       const result = await usersCollection.insertOne(user);
       res.send(result);
+    });
+
+    // Get all new classes
+    app.get("/classes", async (req, res) => {
+      try {
+        const result = await classCollection.find().toArray();
+        res.send(result);
+      } catch (error) {
+        console.error("Error retrieving new classes:", error);
+        res.status(500).send("Error retrieving new classes");
+      }
+    });
+
+    // Create a new class
+    app.post("/addClass", async (req, res) => {
+      const newClass = req.body;
+      try {
+        const result = await classCollection.insertOne(newClass);
+        res.send(result);
+      } catch (error) {
+        console.error("Error creating new class:", error);
+        res.status(500).send("Error creating new class");
+      }
     });
 
     // Send a ping to confirm a successful connection
