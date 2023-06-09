@@ -124,6 +124,25 @@ async function run() {
       }
     });
 
+    // Send feedback for a class
+    app.post("/classes/feedback/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const feedback = req.body.feedback;
+      const updateDoc = {
+        $set: {
+          feedback: feedback,
+        },
+      };
+      try {
+        const result = await classesCollection.updateOne(filter, updateDoc);
+        res.send(result);
+      } catch (error) {
+        console.error("Error sending feedback:", error);
+        res.status(500).send("Error sending feedback");
+      }
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
