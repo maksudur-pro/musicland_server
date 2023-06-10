@@ -112,6 +112,19 @@ async function run() {
       }
     });
 
+    app.get("/approveClass", async (req, res) => {
+      const query = { status: "approved" };
+      const result = await classCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    app.get("/class", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await classCollection.find(query).toArray();
+      res.send(result);
+    });
+
     // Create a new class
     app.post("/addClass", async (req, res) => {
       const newClass = req.body;
