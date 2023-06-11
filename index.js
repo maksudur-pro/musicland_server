@@ -27,6 +27,7 @@ async function run() {
 
     const usersCollection = client.db("musicLand").collection("users");
     const classCollection = client.db("musicLand").collection("class");
+    const cartCollection = client.db("musicLand").collection("cart");
 
     // users related apis
     app.get("/users", async (req, res) => {
@@ -60,6 +61,12 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/instructors", async (req, res) => {
+      const query = { role: "instructor" };
+      const result = await usersCollection.find(query).toArray();
+      res.send(result);
+    });
+
     app.get("/role", async (req, res) => {
       const email = req.query.email;
       const query = { email: email };
@@ -85,6 +92,20 @@ async function run() {
       const query = { _id: new ObjectId(id) };
       const result = await usersCollection.deleteOne(query);
       res.send(result);
+    });
+
+    // cart api
+
+    app.post("/carts", async (req, res) => {
+      const item = req.body;
+      const query = { email: item.email };
+      const existingItem = await cartCollection.findOne(query);
+      if (existingItem) {
+        return res.send({ message: "Class already exists" });
+      } else {
+        const result = await cartCollection.insertOne(item);
+        res.send(result);
+      }
     });
 
     // Handle Google sign-in
