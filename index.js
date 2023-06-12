@@ -253,6 +253,32 @@ async function run() {
       });
     });
 
+    app.put("/payments/:id", async (req, res) => {
+      const payment = req.body;
+      const id = req.params.id;
+      const updateDoc = {
+        $set: payment,
+      };
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      // console.log(payment);
+      const result = await cartCollection.updateOne(query, updateDoc, options);
+      res.send(result);
+    });
+
+    app.put("/classUpdates/:id", async (req, res) => {
+      const data = req.body;
+      const id = req.params.id;
+      const updateDoc = {
+        $set: data,
+      };
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      // console.log(payment);
+      const result = await classCollection.updateOne(query, updateDoc, options);
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
