@@ -23,7 +23,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    client.connect();
+    // client.connect();
 
     const usersCollection = client.db("musicLand").collection("users");
     const classCollection = client.db("musicLand").collection("class");
@@ -168,6 +168,15 @@ async function run() {
       const email = req.query.email;
       const query = { email: email };
       const result = await classCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    app.get("/sortClasses", async (req, res) => {
+      const result = await classCollection
+        .find()
+        .sort({ totalEnrolled: -1 })
+        .limit(6)
+        .toArray();
       res.send(result);
     });
 
